@@ -1,0 +1,133 @@
+git
+=========================================
+
+Setting VIM as Editor:
+git config --global core.editor "vim"
+
+Bring fixes from branch 'bugfix-serious-data-loss' to current branch
+git merge --no-ff bugfix-serious-data-loss
+
+Resynch current branch with master:
+git rebase master
+
+To see the differences of what you have on your local branch but that does not exist on remote branch run:
+git diff origin/master...HEAD
+
+Commits on remote branch since when local branch was created:
+git diff HEAD...origin/master
+
+For a diff with specific commit:
+git diff fd368450130b34e3d53efc21086907607f5810d9
+
+After a new NEUTRON branch is created
+Before committing to neutron repository (after clone and cherry pick):
+git config --global --add gitreview.username "rajesh.mohan"
+
+
+ovs-vsctl
+=========================================
+
+ovs-vsctl -- set interface fw-f1ddcad4-3b options:remote_ip=192.168.2.3 options:dst_port=8472
+ovs-vsctl -- set interface fw-6f5cd9e6-d6 options:remote_ip=192.168.2.4 options:dst_port=8472
+
+ovs-vsctl -- set interface fw-f1ddcad4-3b options:remote_ip=192.168.2.5 options:dst_port=8472
+
+ovs-vsctl -- set interface fw-6f5cd9e6-d6 options:remote_ip=192.168.2.6 options:dst_port=8472
+
+
+Testing
+=========================================
+
+./run_tests.sh -d -s neutron.tests.unit.db.firewall.test_db_firewall
+./run_tests.sh -d -s neutron.tests.unit.test_attributes 
+./run_tests.sh -d -s neutron.tests.unit.services.firewall.agents.l3reference.test_firewall_l3_agent
+ ./run_tests.sh -d -s neutron.tests.unit.test_extension_firewall.FirewallExtensionTestCase 
+ ./run_tests.sh -d -s neutron.tests.unit.services.firewall.test_fwaas_plugin
+
+Paul:
+I just tried run_tests.sh and it fails to run the test (haven't used that in a very long time, so not sure I'm running it correctly). Do I need any special args, when running that? I tried './run_tests.sh -f -V -P' but it ran 0 tests.
+
+
+Service insertion
+=========================================
+
+EXTENDED_ATTRIBUTES_2_0 = {
+    'ports': {SECURITYGROUPS: {'allow_post': True,                                                                                                                                                          
+                               'allow_put': True,
+                               'is_visible': True,
+                               'convert_to': convert_to_uuid_list_or_none,
+                               'default': attr.ATTR_NOT_SPECIFIED}}}
+
+        MEMBER_SEGMENTS: {'allow_post': True, 'allow_put': True,
+                          'default': attributes.ATTR_NOT_SPECIFIED,
+                          'is_visible': True},
+
+
+EXAMPLE OF HIERARCHY
+
+EXTENDED_ATTRIBUTES_2_0 = {
+    'routers': {l3.EXTERNAL_GW_INFO: 
+                {'allow_post': True,
+                 'allow_put': True,
+                 'is_visible': True,
+                 'default': None,
+                 'enforce_policy': True,
+                 'validate':
+                 {'type:dict_or_nodata':
+                  {'network_id': {'type:uuid': None, 'required': True},
+                   'enable_snat': {'type:boolean': None, 'required': False,
+                                   'convert_to': attrs.convert_to_boolean}}
+                  }}}}
+curl -X POST -H "X-Auth-Token: $auth_token" -H "Content-type:application/json" -d '{"firewall": {"name": "fwasstest", "firewall_policy_id": "15384db8-0299-4ade-a39f-aa771c21f021", "service_context": {"routers":["560ccc41-dcc7-4bb1-ada1-51118e093f7c"]}}}' $q_url/fw/firewalls
+
+
+
+curl -X GET -H "X-Auth-Token: $auth_token" $q_url/fw/firewalls
+
+
+
+
+SSLVPN
+=========================================
+
+curl -X GET -H "X-Auth-Token: $auth_token" $q_url/vpn/vpn-credentials|python -mjson.tool
+curl -X GET -H "X-Auth-Token: $auth_token" $q_url/vpn/ssl-vpn-connections|python -mjson.tool
+
+curl -X POST -H "X-Auth-Token: $auth_token" -H "Content-type:application/json" -d '{"vpn_credential": {"name": "cred1", "ca":"ca pem formatted certificate", "server_certificate":"server certificate in PEM format", "server_key":"server key in PEM format", "dh":"dh in PEM format", "crl":"crl in pem format"} }' $q_url/vpn/vpn-credentials
+
+curl -X POST -H "X-Auth-Token: $auth_token" -H "Content-type:application/json" -d '{"ssl_vpn_connection":{"name":"conn3", "client_address_pool_cidr":"10.8.0.0/24", "credential_id": "434a9843-ecc0-4653-8f3a-e604d9d7aadc", "admin_state_up": "True", "vpnservice_id":"cc91b7af-8304-4aff-ad07-86bdbaae2e93"}}' $q_url/vpn/ssl-vpn-connections
+
+curl -X GET -H "X-Auth-Token: $auth_token"  $q_url/vpn/ssl-vpn-connections|python -m json.tool
+
+curl -X DELETE -H "X-Auth-Token: $auth_token"  $q_url/vpn/vpn-credentials/336fb70e-8ce1-469a-9f6f-04f696d030cf
+curl -X GET -H "X-Auth-Token: $auth_token" $q_url/vpn/sslvpn-site-connections|python -mjson.tool
+
+ 
+
+
+Horizon: 
+=========================================
+
+Run python -m pdb manage.py runserver in /opt/stack/horizon
+
+
+
+
+Mailing list:
+=========================================
+
+Whether vendor-specific error descriptions can make sense to a tenant, that's a good question.
+Personally, I feel like as a tenant that information would not be a lot useful to me, as I would not be able to do any debug or maintenance on the appliance where the error was generated; on the other hand, as a deployer I might find that message very useful, but probably I would look for it in the logs rather than in API responses; furthermore, as a deployer I might find more convenient to not provide tenants any detail about the peculiar driver being used.
+
+Your workflow is very similar to many other plugins.  You’ll want to look at implementing the port binding extension in your plugin.  The port binding extension allows Nova to inform Neutron of the host where the VM is running.
+
+
+A bit of a terminology nit ... SmokeStack is a specific system that runs tests and reports results back to gerrit.  Presumably the requirement is to be *like* SmokeStack, but not be integrated with SmokeStack itself.
+
+
+
+
+
+
+
+
