@@ -1,0 +1,13 @@
+# Configuration for {{vpnservice.name}}
+proto udp
+port 1194
+dev tun0
+verb 3
+keepalive 15 60
+#secret config/static.key
+ca {{openvpn_path}}/ca.crt
+cert {{openvpn_path}}/server.crt
+key {{openvpn_path}}/server.key
+dh {{openvpn_path}}/dh1024.pem
+#daemon
+server {{ssl_vpn_connection.pool.network}} {{ssl_vpn_connection.pool.netmask}}

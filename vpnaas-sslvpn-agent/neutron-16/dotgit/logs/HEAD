@@ -1,0 +1,3 @@
+0000000000000000000000000000000000000000 42874635de321255afdba5eac66df93d3957ea1f Rajesh Mohan <rmohan@devstack-si.(none)> 1410480744 -0700	clone: from https://github.com/openstack/neutron
+42874635de321255afdba5eac66df93d3957ea1f 36a3bc728c80f0af3d5b4a60d8ca4b1394777d25 Rajesh Mohan <rmohan@devstack-si.(none)> 1410480959 -0700	checkout: moving from master to FETCH_HEAD
+36a3bc728c80f0af3d5b4a60d8ca4b1394777d25 36a3bc728c80f0af3d5b4a60d8ca4b1394777d25 Rajesh Mohan <rmohan@devstack-si.(none)> 1410480968 -0700	checkout: moving from 36a3bc728c80f0af3d5b4a60d8ca4b1394777d25 to lastrevision
